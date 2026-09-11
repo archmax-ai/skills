@@ -1,9 +1,9 @@
 ---
-name: docx-xlsx-pptx
-description: Fill and edit Word (.docx), Excel (.xlsx) and PowerPoint (.pptx) documents from a template by unpacking the container, editing its XML parts and packing it again. Read this before creating or changing any Office document.
+name: Microsoft Office Documents
+description: Fill and edit Microsoft Office documents — Word DOCX, Excel XLSX and PowerPoint PPTX — from a template by unpacking the container, editing its XML parts and packing it again. Read this before creating or changing any DOCX, XLSX or PPTX file.
 ---
 
-# OOXML documents
+# Microsoft Office documents
 
 An Office document is a zip container of XML parts. You never write the binary; you unpack
 the container, edit the parts as text, and pack it again.

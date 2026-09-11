@@ -18,7 +18,7 @@ skills/<slug>/assets/       # optional: data files the skill refers to
 One level, no categories: every direct child of `skills/` that holds a `SKILL.md` is one
 skill, and its **directory name is the slug** — the identifier a workflow grants it by in
 `skills.allow` / `skills.allow_always` and the name it installs under. Slugs are lowercase
-letters, digits and hyphens (`refund-policy`, `docx-xlsx-pptx`). A directory without a
+letters, digits and hyphens (`refund-policy`, `microsoft-office-documents`). A directory without a
 `SKILL.md`, with any other name shape, or containing a symbolic link is not offered.
 
 Every regular file beneath a skill's directory is part of its bundle and is copied on
@@ -29,8 +29,8 @@ a skill's whole text is read by the model once the skill is chosen.
 
 ```yaml
 ---
-name: docx-xlsx-pptx
-description: Fill and edit Word and Excel documents from a template. Read this before creating any .docx or .xlsx.
+name: Microsoft Office Documents
+description: Fill and edit Microsoft Office documents — Word DOCX, Excel XLSX and PowerPoint PPTX — from a template. Read this before creating or changing any DOCX, XLSX or PPTX file.
 ---
 ```
 
