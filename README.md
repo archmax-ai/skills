@@ -41,10 +41,13 @@ the slug and the commit a skill was copied from.
 
 ## Contributing
 
-Open a pull request adding `skills/<slug>/`. Write for the agent that will read it: name the
-platform's tools exactly (`files__unpack_file`, `get_markdown`, `edit_file`, …), state the
-rules that keep a task from going wrong, and leave out anything the tool descriptions already
-say. Anything the agent must be able to execute goes under `scripts/`; nothing else in a
-bundle runs.
+Open a pull request adding `skills/<slug>/`. Write for the agent that will read it. Describe
+the **capabilities** a skill needs — "a tool that unpacks a zip container into a folder" — and
+how to use them, rather than naming platform tools: tool names differ between agents and
+change over time, and the agent reading the skill already sees its own tools' names and
+descriptions. Open with a short "What you need" list so the agent can tell at once whether it
+can follow the skill, state the rules that keep a task from going wrong, and leave out anything
+the tools' own descriptions already say. Anything the agent must be able to execute goes under
+`scripts/`; nothing else in a bundle runs.
 
 Licensed under the MIT License (see `LICENSE`).
