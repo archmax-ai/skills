@@ -1,5 +1,5 @@
 ---
-name: OOXML documents
+name: docx-xlsx-pptx
 description: Fill and edit Word (.docx), Excel (.xlsx) and PowerPoint (.pptx) documents from a template by unpacking the container, editing its XML parts and packing it again. Read this before creating or changing any Office document.
 ---
 
