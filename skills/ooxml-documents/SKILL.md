@@ -23,6 +23,9 @@ missing, say which and stop rather than improvising.
 - **Read and edit files as text** — list a directory, read a file, search files for a string,
   and replace one exact string with another in a file. Writing a whole new file is needed only
   when adding a part, such as a new sheet.
+- **Move or copy a file** — needed only for images: placing a picture you hold into the
+  unpacked directory as a media part, or swapping one media part for another. A text editor
+  cannot do this; image bytes are never read or written as text.
 - **Render a document as text** — a tool that shows a document's prose and tables as markdown.
   Use it to read; it never edits.
 
@@ -148,6 +151,72 @@ A sheet is a new part and needs four coordinated changes inside the unpacked dir
    `sheetId` is unique.
 4. In `[Content_Types].xml`, replace `</Types>` with
    `<Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>`.
+
+## Images
+
+Pictures are **media parts**: binary files under `word/media/` (Word), `xl/media/` (Excel)
+or `ppt/media/` (PowerPoint), reached from a content part through a relationship. Three
+things tie one together:
+
+- the media file itself, for example `word/media/image1.png`;
+- a `Relationship` in the content part's `.rels` file (`word/_rels/document.xml.rels`,
+  `ppt/slides/_rels/slide1.xml.rels`) with `Type=".../relationships/image"`, a `Target`
+  pointing at the media file, and an `Id` such as `rId5`;
+- a reference to that `Id` inside the content XML: `<a:blip r:embed="rId5"/>` in a
+  `<w:drawing>` (Word) or `<p:pic>` (PowerPoint).
+
+The file's extension must also be declared once in `[Content_Types].xml` as a `Default`
+(`<Default Extension="png" ContentType="image/png"/>`); templates that already contain a
+picture of that type have it, templates that do not need it added.
+
+Never open a media file with a text tool: reading it shows noise and writing it corrupts it.
+Move or copy the file as bytes.
+
+### Replace a picture, keep its place and size
+
+The simplest and most reliable operation. Find which media file the picture is: search the
+content part for `r:embed`, take the `rId`, look it up in the `.rels` file to get the
+`Target`. Then copy your new image over that media file **under the same name**. Nothing
+else changes: the relationship, the placement and the declared size stay as the template
+had them. A logo swap, a signature, a product photo in a fixed frame all work this way.
+
+The picture is drawn at the size the XML declares, not the image's own size, so a
+replacement with a different aspect ratio is stretched. Match the original's proportions, or
+adjust the extent (see below).
+
+### Insert a new picture
+
+Adding a picture is a new part with the same four-part discipline as a new sheet:
+
+1. Copy the image into the media directory under a new, unused name (`image7.png`).
+2. In the content part's `.rels`, add
+   `<Relationship Id="rId99" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/image7.png"/>`
+   with an `Id` unused in that file.
+3. Ensure `[Content_Types].xml` has a `Default` for the extension.
+4. In the content XML, insert a drawing that references the `Id`. Do not write one from
+   memory: copy an existing `<w:drawing>…</w:drawing>` (or `<p:pic>…</p:pic>`) from the
+   template, change its `r:embed` to the new `Id`, give its `wp:docPr` a new unique `id`,
+   and set its size.
+
+If the template contains no picture at all, prefer asking for a template that does, or
+replacing a picture in a template that has one, over composing drawing XML by hand.
+
+### Size and position
+
+Sizes are in EMUs: 914400 per inch, 360000 per centimetre. A picture 6 cm wide is
+`cx="2160000"`. Set the same values in both places Word keeps them — `<wp:extent cx cy/>`
+and `<a:ext cx cy/>` inside the drawing — and keep the aspect ratio of the image. Inline
+pictures (`<wp:inline>`) flow with the text and are the easy case; anchored pictures
+(`<wp:anchor>`) carry positioning that is best left as the template had it.
+
+### Excel and PowerPoint
+
+In Excel a picture belongs to a drawing part (`xl/drawings/drawing1.xml`) that the sheet
+references through its own `.rels`; the media relationship lives in
+`xl/drawings/_rels/drawing1.xml.rels`. Replacing the media file by name works exactly as in
+Word. In PowerPoint each slide's `.rels` holds its own image relationships, so the same
+`rId` may mean different pictures on different slides — always read the `.rels` of the slide
+you are editing.
 
 ## PPTX
 
