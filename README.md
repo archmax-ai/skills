@@ -1,53 +1,63 @@
-# Pangea skills
+# Skills
 
-Skills the Pangea platform offers from its **Browse skills** dialog. A deployment names this
-repository in its registries document (`PANGEA_SKILL_REGISTRIES`), clones it when the API
-starts, and lets an owner copy any skill here into an environment's `skills/` folder. After
-that copy the environment owns the files: they are edited, published and promoted like a
-skill written by hand, and nothing at run time reads this repository.
+A registry of agent skills. Each skill is a folder holding a `SKILL.md` and whatever
+references, scripts and assets it needs. A platform that offers skills to its users clones
+this repository and copies a skill into an environment on request; after that copy the
+environment owns the files and nothing at run time reads this repository.
+
+The repository is not tied to any one platform or agent. A skill here describes a task and
+the capabilities it needs — not the tool names of whichever agent ends up reading it.
 
 ## Layout
 
 ```
-skills/<slug>/SKILL.md      # required: YAML frontmatter with `name` and `description`, then the guidance
+skills/<slug>/SKILL.md      # required: YAML frontmatter, then the guidance
 skills/<slug>/references/   # optional: documents the skill tells the agent to read
-skills/<slug>/scripts/      # optional: runtime scripts the agent may execute with pangea_run
+skills/<slug>/scripts/      # optional: runtime scripts the agent may execute
 skills/<slug>/assets/       # optional: data files the skill refers to
 ```
 
 One level, no categories: every direct child of `skills/` that holds a `SKILL.md` is one
-skill, and its **directory name is the slug** — the identifier a workflow grants it by in
-`skills.allow` / `skills.allow_always` and the name it installs under. Slugs are lowercase
-letters, digits and hyphens (`refund-policy`, `microsoft-office-documents`). A directory without a
-`SKILL.md`, with any other name shape, or containing a symbolic link is not offered.
+skill, and its **directory name is the slug** — the identifier the skill is granted by and
+installs under. Slugs are lowercase letters, digits and hyphens (`refund-policy`,
+`microsoft-office-documents`). A directory without a `SKILL.md`, with any other name shape, or
+containing a symbolic link is not a skill.
 
 Every regular file beneath a skill's directory is part of its bundle and is copied on
-install. Keep bundles small: the platform refuses a file above its shared 20 MiB cap, and
-a skill's whole text is read by the model once the skill is chosen.
+install. Keep bundles small: a host may refuse an oversized file, and a skill's whole text is
+read by the model once the skill is chosen.
 
 ## Frontmatter
 
 ```yaml
 ---
 name: Microsoft Office Documents
-description: Fill and edit Microsoft Office documents — Word DOCX, Excel XLSX and PowerPoint PPTX — from a template. Read this before creating or changing any DOCX, XLSX or PPTX file.
+description: Fill in and edit Word, Excel and PowerPoint files — letters, spreadsheets and slide decks — starting from an existing template. Read this before creating or changing any DOCX, XLSX or PPTX file.
+tools:
+  - Unpack a file archive into a folder, and pack a folder back into one file
+  - List, read, search and edit files as text
+  - Copy or move a file without opening it (only for documents with pictures)
+  - View a document's text and tables
+  - Send or store the finished file
 ---
 ```
 
-`name` is what the owner and the agent see; `description` is **all the agent sees before
-choosing the skill**, so say what it covers and the moments that should trigger it. Other
-keys are preserved on install; the platform adds a `metadata` mapping recording the registry,
-the slug and the commit a skill was copied from.
+- `name` — what a person and the agent see in a list of skills.
+- `description` — the only thing the agent sees before choosing the skill, and the line a
+  person reads when deciding whether to install it. Write it for someone who does not know
+  the underlying technology.
+- `tools` — the capabilities the skill needs, so a person can tell before installing whether
+  their agent can follow it.
+
+The plain-language rule covers these frontmatter fields only. The guidance below the
+frontmatter is read by the model that runs the skill and is as technical as the task needs.
+
+Other keys are preserved on install; a host may add its own `metadata` recording where a
+skill was copied from.
 
 ## Contributing
 
-Open a pull request adding `skills/<slug>/`. Write for the agent that will read it. Describe
-the **capabilities** a skill needs — "a tool that unpacks a zip container into a folder" — and
-how to use them, rather than naming platform tools: tool names differ between agents and
-change over time, and the agent reading the skill already sees its own tools' names and
-descriptions. Open with a short "What you need" list so the agent can tell at once whether it
-can follow the skill, state the rules that keep a task from going wrong, and leave out anything
-the tools' own descriptions already say. Anything the agent must be able to execute goes under
-`scripts/`; nothing else in a bundle runs.
+Open a pull request adding `skills/<slug>/`. [AGENTS.md](AGENTS.md) is the contract every
+skill in this repository follows — read it before writing one.
 
 Licensed under the MIT License (see `LICENSE`).

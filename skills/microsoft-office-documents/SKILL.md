@@ -1,6 +1,12 @@
 ---
 name: Microsoft Office Documents
-description: Fill and edit Microsoft Office documents — Word DOCX, Excel XLSX and PowerPoint PPTX — from a template by unpacking the container, editing its XML parts and packing it again. Read this before creating or changing any DOCX, XLSX or PPTX file.
+description: Fill in and edit Word, Excel and PowerPoint files — letters, spreadsheets and slide decks — starting from an existing template. Read this before creating or changing any DOCX, XLSX or PPTX file.
+tools:
+  - Unpack a file archive into a folder, and pack a folder back into one file
+  - List, read, search and edit files as text
+  - Copy or move a file without opening it (to copy a template, and for pictures)
+  - View a document's text and tables
+  - Send or store the finished file
 ---
 
 # Microsoft Office documents
@@ -10,8 +16,8 @@ the container, edit the parts as text, and pack it again.
 
 ## What you need
 
-This skill assumes four capabilities. Check that you have each before you start; if one is
-missing, say which and stop rather than improvising.
+This skill assumes the capabilities listed in its frontmatter. Check that you have each
+before you start; if one is missing, say which and stop rather than improvising.
 
 - **Unpack a container** — a tool that takes a file you hold and extracts every entry into a
   directory, preserving the entry paths inside the container (`word/document.xml`,
@@ -23,11 +29,14 @@ missing, say which and stop rather than improvising.
 - **Read and edit files as text** — list a directory, read a file, search files for a string,
   and replace one exact string with another in a file. Writing a whole new file is needed only
   when adding a part, such as a new sheet.
-- **Move or copy a file** — needed only for images: placing a picture you hold into the
-  unpacked directory as a media part, or swapping one media part for another. A text editor
-  cannot do this; image bytes are never read or written as text.
+- **Move or copy a file** — to copy a template to the name your document should have before
+  you unpack it, and for images: placing a picture you hold into the unpacked directory as a
+  media part, or swapping one media part for another. A text editor cannot do the latter;
+  image bytes are never read or written as text.
 - **Render a document as text** — a tool that shows a document's prose and tables as markdown.
   Use it to read; it never edits.
+- **Deliver the finished file** — a tool that sends, stores or forwards a file you hold, or
+  turns it into a download link. Without one the document never leaves your working directory.
 
 Files are referred to by the paths your file tools report, relative to your working
 directory. Never paste a file's bytes into a tool argument.
@@ -35,10 +44,13 @@ directory. Never paste a file's bytes into a tool argument.
 ## Core rules
 
 1. **Never write a `.docx`, `.xlsx` or `.pptx` from scratch.** Derive it from a template: a
-   document attached to this conversation, one in a directory you were given, or one you
-   fetched from a link. List and search your working directory before asking. Raw OOXML written by hand yields
-   missing styles and files Office refuses to open. If no template exists, ask for one — and
-   if nobody is watching this session, ask through the channel the request came from.
+   document attached to this conversation, one in a directory you were given, one you
+   fetched from a link, or — when nobody supplies one — a copy of the blank template that
+   ships beside this file (see "Blank templates"). List and search your working directory
+   before asking. Raw OOXML written by hand yields missing styles and files Office refuses to
+   open. A supplied template beats a blank one whenever the document needs a house style,
+   letterhead or logo, so if the request implies one and none is there, ask — and if nobody
+   is watching this session, ask through the channel the request came from.
 2. **Read as text, edit as parts.** Render the whole document to see what it says. Change it by
    unpacking, editing parts, packing.
 3. **Nothing checks your XML.** A part that is no longer well-formed produces a document Office
@@ -48,6 +60,48 @@ directory. Never paste a file's bytes into a tool argument.
    itself:
    attach it with the tool that sends messages, hand it to the tool that stores or forwards
    files, or create a download link when a person or system needs one.
+
+## Blank templates
+
+Three empty but valid documents sit next to this file, for when the request supplies no
+template of its own:
+
+| File | What is in it |
+| --- | --- |
+| `template.docx` | one empty paragraph, A4 portrait, default Word styles |
+| `template.xlsx` | one empty sheet named `Tabelle1` |
+| `template.pptx` | one title slide (title and subtitle placeholders), 16:9, Office theme |
+
+They hold no content and no author metadata, so they are a clean start rather than someone
+else's document with the text taken out.
+
+**Copy one, never work on it in place.** Copy the file into your working directory under the
+name the finished document should have, then unpack that copy and edit it. Unpacking or
+packing over the template itself leaves the next document starting from your leftovers.
+
+A blank template carries no letterhead, logo or corporate styling. When the request wants
+those, it needs a real template — the blank one cannot stand in for it.
+
+### Language
+
+The blank templates are set to German (`de-DE`). That setting does not translate anything; it
+decides the proofing language and the locale Word and PowerPoint assume, so leave it alone
+for a German document and change it for any other. Each format keeps it elsewhere:
+
+- **DOCX** — `w:val` on `<w:lang>` in `word/styles.xml` (the `docDefaults` run properties),
+  and `<w:themeFontLang w:val="de-DE"/>` in `word/settings.xml`. Runs that carry their own
+  `<w:lang>` override the default, so search the unpacked directory for `w:lang` rather than
+  trusting the two above.
+- **PPTX** — a `lang="de-DE"` attribute on every `<a:rPr>`, `<a:endParaRPr>` and `<a:defRPr>`,
+  spread over `ppt/slides/`, `ppt/slideLayouts/` and `ppt/slideMasters/`. This is one of the
+  rare edits where replacing all occurrences of `lang="de-DE"` in each part really is the same
+  edit everywhere.
+- **XLSX** — cells have no language. What is German is the sheet name `Tabelle1`; rename it in
+  `<sheet name="Tabelle1" .../>` in `xl/workbook.xml`, and change the matching `<vt:lpstr>` in
+  `docProps/app.xml` so the two agree.
+
+The same applies to a supplied template: it is written in some language already, and the
+document you produce should keep it unless the request says otherwise.
 
 ## Workflow: unpack → edit → pack
 
