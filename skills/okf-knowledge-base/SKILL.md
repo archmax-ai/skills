@@ -5,7 +5,6 @@ tools:
   - List, read, search, create and edit files as text
   - Move or rename a file (only when reorganising the folders)
   - Find out the current date and time
-  - Run a script that ships with this skill (only for the check at the end)
   - Fetch a web page (only when a note records material from the web)
 ---
 
@@ -22,6 +21,11 @@ every mistake you can make here is a *silent* one: a link that points nowhere, a
 no longer matches its directory, a claim with no source, a folder nobody would think to open.
 The rules below are what keeps a bundle usable after a few hundred edits.
 
+A complete small bundle to copy the shape from — twelve concepts, two directories, an index
+per directory and a log — is in [assets/example-wiki/](assets/example-wiki/). It is a business
+wiki rather than a data catalogue, and it shows every field and habit this skill describes,
+including a deprecated concept, a draft, and concepts at each trust tier.
+
 ## What you need
 
 This skill assumes the capabilities listed in its frontmatter. Check that you have each
@@ -35,9 +39,6 @@ before you start; if one is missing, say which and stop rather than improvising.
   concept").
 - **The current date and time** — every timestamp you write is an ISO 8601 instant with a UTC
   offset (`2026-09-12T14:30:00Z`). Never guess it and never copy a neighbouring file's.
-- **Run a script** — `scripts/check_bundle.py` checks the bundle before you finish. If you
-  cannot run scripts, do the checks by searching instead; the script's output describes each
-  one.
 - **Fetch a web page** — only when a concept records material from the web. Record only
   sources you actually read.
 
@@ -61,8 +62,9 @@ before you start; if one is missing, say which and stop rather than improvising.
 6. **Prefer deprecating to deleting.** Other concepts link to a file; links that point
    nowhere are legal and so nothing will tell you that you broke one. Set
    `status: deprecated`, say in the body what replaces it, and keep the file.
-7. **Run the check before you finish.** `python3 scripts/check_bundle.py <bundle-dir>` —
-   errors mean the bundle is no longer conformant.
+7. **Nothing validates the bundle, so you do.** Before you finish, walk the checks in
+   "Before you finish" — they are searches, and they are the only thing standing between a
+   silent breakage and a reader who trusts the wiki.
 
 ## Reading a bundle
 
@@ -71,13 +73,94 @@ Read top-down, not by reading every file:
 1. Read the bundle-root `index.md`. It lists the directories and what is in them, and is what
    the format calls progressive disclosure — it exists so you do not have to open everything.
 2. Read the `index.md` of the directory you need, then the concepts it names.
-3. When there is no index, list the tree and search frontmatter instead: `type:` values tell
-   you what kinds of concept exist, `tags:` values cut across directories.
+3. When there is no index, or the question does not map onto the tree, search instead — see
+   "Searching a bundle".
 4. Read `log.md` when you need to know what recently changed or why something was retired.
 
 Before answering from a concept, look at its `status` (`deprecated` means do not use it for
 new work), its `stale_after` (past that instant the content is stale), and whether it carries
 a `verified` entry at all. Unverified content is still usable — say that it is unverified.
+
+## Searching a bundle
+
+A bundle is queryable without any tooling because every concept keeps its metadata in the same
+place, in the same shape. The format expects exactly this: a consumer that wants a tag view or
+a type view synthesises one by scanning frontmatter, because nothing in the bundle stores one.
+
+Work cheapest-first — **navigate, then query frontmatter, then follow links, then read
+bodies** — and stop as soon as you have the answer.
+
+### 1. Navigate the indexes
+
+Root `index.md` → the directory's `index.md` → the concept. Always try this first: it is one
+read per level and it is what progressive disclosure is for.
+
+An index is an accelerator, not the record. It is written by hand and goes stale silently, so
+when it disagrees with the directory, the files win — and if you are relying on one, spot-check
+it against a listing of the directory.
+
+### 2. Query the frontmatter
+
+Anchor searches to the start of a line (`^type:`), or prose about policies will answer a search
+for policy concepts.
+
+| Question | Search |
+|----------|--------|
+| What kinds of thing live here? | `^type:` across the bundle, then tally the values |
+| Everything of one kind | `^type: Policy` |
+| A grouping the folders cannot express | `^tags:` for the tag — allow for both `[a, b]` and block-list form |
+| What must I not answer from? | `^status: deprecated` |
+| What is unfinished? | `^status: draft` |
+| What has expired? | `^stale_after:`, then compare each date with today |
+| Which concept describes this external asset? | `^resource:` with the asset's URL or identifier |
+| What breaks if this source changes? | the source's URL inside `sources:` blocks |
+| What has nobody checked? | list the concepts, then subtract those matching `^verified:` |
+
+The last row is the one that needs a different move: **absence is meaningful in this format,
+and you cannot search for an absent key.** Unverified, undated and untagged content is found by
+enumerating and subtracting, never by a single search.
+
+Subtract carefully. Both lists have to name their files the same way — a listing that yields
+`./policies/time-off.md` against a search that yields `policies/time-off.md` overlaps nowhere,
+and the subtraction then returns *every* concept while looking like a clean answer. Normalise
+the paths, and sanity-check the count against the total before you believe the result.
+
+### 3. Follow the links, in both directions
+
+Forward links are in the body. Backlinks are not recorded anywhere — to find everything that
+points *at* a concept, search the bundle for its file name (`orders.md`). Read the hits rather
+than counting them: a bare file-name search also matches a longer name ending the same way
+(`orders.md` inside `open-orders.md`) and matches prose that names the file without linking
+it. Searching for the link syntax around it separates the two.
+
+Do that every time before you move, rename or deprecate a concept. It is the step that gets
+skipped, and the format guarantees no complaint when you skip it.
+
+### 4. Read bodies last
+
+Full-text search finds what is not metadata: a number, a rule, a name. Two caveats — a hit
+inside a fenced code block or a table cell is often not a claim the concept is making, and a
+body search finds the words the author happened to use, which is what `tags` and a glossary
+concept exist to work around.
+
+### What no search will answer
+
+Why something was retired, what changed last month, what was tried and abandoned. That is what
+`log.md` is for, and it is the only place an intention is written down. Read it before
+concluding that a gap in the wiki is an oversight.
+
+### Habits
+
+- **Search the whole bundle, never one directory.** Types, tags and links all cross
+  directories; the tree is one view of the graph, not its shape.
+- **Check `status` and `stale_after` on every hit** before you use it. A deprecated concept
+  reads exactly like a current one.
+- **Enumerate before you filter.** Tally `^type:` values first: two spellings of one kind
+  (`Playbook` and `Runbook`) split the vocabulary silently, and a search for one returns half
+  the answer with no sign that a half is missing. The same tally is the cheapest health check
+  the bundle has.
+- **Say which tier your answer came from.** An unverified concept and a human-reviewed one
+  look identical in a search result and are not worth the same.
 
 ## Writing a concept
 
@@ -107,7 +190,9 @@ handbook.[^analytics-handbook] Sessions come from the [events table](../tables/e
 - `type` is a short, self-explanatory string. Reuse a value the bundle already uses — search
   for `^type:` before inventing a new one. Nothing registers types centrally, so two spellings
   of the same kind (`Playbook` and `Runbook`) split the bundle silently.
-- `description` is **one sentence**. It is copied verbatim into `index.md` entries.
+- `description` is **one sentence**. It is copied verbatim into `index.md` entries. Quote
+  any value holding a colon followed by a space (`title: "Incident response: day one"`) —
+  unquoted, it is a YAML syntax error and the whole file stops parsing.
 - `resource` is the URI of the thing the concept describes, when it describes a real asset.
   Omit it for abstract concepts.
 - Favour structural markdown — headings, tables, fenced code — over prose paragraphs. The
@@ -147,6 +232,9 @@ when the flat list stops being readable, not before:
 | under ~12 | flat root, one `index.md` |
 | ~12 to ~40 | one level of directories, each with an `index.md` |
 | over ~40 | two levels; a third only for a genuinely deep subtree |
+
+[assets/example-wiki/](assets/example-wiki/) sits just past the first threshold: two concepts
+at the root, and two directories that each earned their place with five.
 
 **Create a subdirectory only when all three hold:**
 
@@ -325,18 +413,24 @@ one:
 
 ## Before you finish
 
-Run the check over the bundle, giving it the bundle's root directory:
+Nothing checks a bundle for you. Run these yourself over what you touched — each is a search
+from "Searching a bundle", and each catches a failure that is otherwise silent:
 
-```
-python3 scripts/check_bundle.py <bundle-dir>
-```
+1. **Every concept file you wrote starts with `---`, and its frontmatter holds a non-empty
+   `type`.** These are the only two things that can make a bundle non-conformant.
+2. **No frontmatter value holds an unquoted colon-space.** One unquoted `description: Opening
+   a project: scope` stops the whole file parsing, not just that field.
+3. **Every link you wrote resolves.** Check each target path exists. Broken links are legal,
+   so nothing else will tell you.
+4. **Nothing links to a file you moved or removed.** Search the bundle for its old name.
+5. **Every `index.md` you touched matches its directory.** Compare the listing against the
+   files actually there, both ways: a file missing from the index, and an entry pointing at
+   nothing.
+6. **Timestamps are ISO 8601 with a UTC offset**, and any `stale_after` you set is in the
+   future.
+7. **`log.md` has your entry**, under an ISO date heading, newest first.
 
-It reports three levels: **ERROR** breaks the format and must be fixed; **WARN** is legal but
-almost always a mistake (broken links, non-ISO timestamps, an index that omits a file, a
-passed `stale_after`); **NOTE** is a structure or naming habit worth fixing while you are
-there. It exits non-zero only on errors, and checks frontmatter more precisely when a YAML
-parser is importable — the output line says which mode it ran in.
-
-Then confirm by hand what the script cannot judge: that each new `description` reads as one
-useful sentence, that every claim you added is either sourced or visibly unverified, and that
-the `log.md` entry says why, not just what.
+Then confirm what no search can judge: that each new `description` reads as one useful
+sentence, that every claim you added is either sourced or visibly unverified, that no
+`verified` entry claims a check that did not happen, and that the log entry says why, not just
+what.

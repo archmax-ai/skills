@@ -107,7 +107,9 @@ comparison that does not depend on when the concept was read.
 ## Timestamps and paths
 
 Every timestamp is an ISO 8601 datetime with an explicit UTC offset: `2026-06-30T14:00:00Z`.
-A bare date is not valid. Quote a timestamp if your writer would otherwise emit it unquoted in
+A bare date is not valid. Quote any value containing a colon followed by a space — a
+`description` or `title` that reads naturally with a colon in it is otherwise a YAML syntax
+error, and the file stops parsing entirely rather than losing one field. Quote a timestamp if your writer would otherwise emit it unquoted in
 a way a YAML parser turns into a native date — either form parses, but keep one style per
 bundle.
 
@@ -197,8 +199,9 @@ containing a non-empty `type`, and `index.md` / `log.md` follow their structures
 must not reject a bundle for missing optional fields, unknown `type` values, unknown extra
 keys, broken cross-links, or missing `index.md` files.
 
-That permissiveness is why `scripts/check_bundle.py` also reports warnings and notes: the
-things it flags are all legal, and all still mistakes.
+That permissiveness is the reason this skill asks you to check your own work: broken links,
+a stale index, an unverified claim and a passed `stale_after` are all legal, and all still
+mistakes. A consumer will accept them silently.
 
 ## Reading an older bundle
 
