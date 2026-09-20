@@ -105,8 +105,8 @@ document you produce should keep it unless the request says otherwise.
 
 ## Workflow: unpack → edit → pack
 
-1. Unpack the template into a directory of its own inside your working directory, one per
-   document, so two documents never mix parts.
+1. Unpack the template into a directory of its own on local disk, one per document, so two
+   documents never mix parts (see "Work on local disk").
 2. List that directory to see the parts; search it for your placeholders (for example `[[`) to
    learn which part holds each one — a date may sit in the body and in a header.
 3. Read the part you will change to see its actual XML around the placeholder.
@@ -115,6 +115,14 @@ document you produce should keep it unless the request says otherwise.
 
 Notes:
 
+- **Work on local disk.** Unpacking spreads one document into dozens or hundreds of small
+  parts, and every edit and the final pack touches them again. A directory on remote storage —
+  a synced folder such as OneDrive, SharePoint or Dropbox, or a mounted network share — makes
+  that slow, and a sync that runs mid-edit can hand you a half-written part or pack a file
+  that is still uploading. So unpack into a local scratch directory, do the work there, and
+  copy only the finished document to wherever it belongs. If the only directory you can write
+  to is remote, accept it and carry on there — it works, it is just slower and worth one extra
+  read-back of the parts you changed before you pack.
 - Do not add or remove files in the unpacked directory unless you also update
   `[Content_Types].xml` and the relationship parts (see "Add a new sheet").
 - Address `[Content_Types].xml` by its exact path with read and edit. Do not use a glob pattern
