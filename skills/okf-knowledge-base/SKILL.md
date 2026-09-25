@@ -22,7 +22,7 @@ no longer matches its directory, a claim with no source, a folder nobody would t
 The rules below are what keeps a bundle usable after a few hundred edits.
 
 A complete small bundle to copy the shape from — twelve concepts, two directories, an index
-per directory and a log — is in [assets/example-wiki/](assets/example-wiki/). It is a business
+per directory and a changelog — is in [assets/example-wiki/](assets/example-wiki/). It is a business
 wiki rather than a data catalogue, and it shows every field and habit this skill describes,
 including a deprecated concept, a draft, and concepts at each trust tier.
 
@@ -47,9 +47,10 @@ before you start; if one is missing, say which and stop rather than improvising.
 1. **One concept per file, and `type` in every one.** A concept file with no frontmatter, or
    with an empty `type`, breaks the format. Everything else is optional — but write `title`
    and `description` too: index entries, search results and previews are built from them.
-2. **`index.md` and `log.md` are reserved.** They are never concept documents. Never give a
-   concept one of those names, and never put frontmatter in an `index.md` (a bundle-root
-   `okf_version` is the single exception).
+2. **`index.md` and `CHANGELOG.md` are reserved**, and so is `log.md`, the older name for the
+   changelog. They are never concept documents. Never give a concept one of those names, and
+   never put frontmatter in an `index.md` or `CHANGELOG.md` (a bundle-root `okf_version` in
+   `index.md` is the single exception).
 3. **Never invent a second metadata scheme.** If you need a field the format does not name,
    add a plain frontmatter key. Do not put metadata in the body, in a file name, in a
    sidecar file, or in a folder name.
@@ -58,7 +59,8 @@ before you start; if one is missing, say which and stop rather than improvising.
    actually confirmed the content in this session (see "Provenance and trust").
 5. **Every edit that changes the tree changes three other things.** Adding, moving or
    removing a concept means: fix the links that pointed at it, update the `index.md` of every
-   directory involved, and add a `log.md` entry. Nothing does this for you.
+   directory involved, and add a `CHANGELOG.md` entry. Nothing does this for you. Every
+   other change to content gets a `CHANGELOG.md` entry too.
 6. **Prefer deprecating to deleting.** Other concepts link to a file; links that point
    nowhere are legal and so nothing will tell you that you broke one. Set
    `status: deprecated`, say in the body what replaces it, and keep the file.
@@ -75,7 +77,7 @@ Read top-down, not by reading every file:
 2. Read the `index.md` of the directory you need, then the concepts it names.
 3. When there is no index, or the question does not map onto the tree, search instead — see
    "Searching a bundle".
-4. Read `log.md` when you need to know what recently changed or why something was retired.
+4. Read `CHANGELOG.md` when you need to know what recently changed or why something was retired.
 
 Before answering from a concept, look at its `status` (`deprecated` means do not use it for
 new work), its `stale_after` (past that instant the content is stale), and whether it carries
@@ -146,7 +148,7 @@ concept exist to work around.
 ### What no search will answer
 
 Why something was retired, what changed last month, what was tried and abandoned. That is what
-`log.md` is for, and it is the only place an intention is written down. Read it before
+`CHANGELOG.md` is for, and it is the only place an intention is written down. Read it before
 concluding that a gap in the wiki is an oversight.
 
 ### Habits
@@ -287,7 +289,7 @@ it.
 3. Search the whole bundle for each old path and fix every link. This is the step that gets
    skipped and the one that breaks the graph.
 4. Update the parent `index.md` to list the new directory, and remove the moved entries.
-5. Add a `log.md` entry naming what moved and why.
+5. Add a `CHANGELOG.md` entry naming what moved and why.
 
 ### When to split one concept into two files
 
@@ -329,29 +331,62 @@ Keep entries in the same link style as the rest of the bundle. When you add, mov
 concept, update the index in the same edit — an index that disagrees with its directory is
 worse than no index, because readers stop opening the files it omits.
 
-## log.md
+## CHANGELOG.md
 
-A `log.md` may sit at any level and records the history of that scope. Newest first, one
-`## YYYY-MM-DD` heading per day, ISO dates only:
+Every bundle keeps a `CHANGELOG.md` at its root, and **every change to the bundle gets an
+entry in it, in the same edit**: a concept added, changed, moved, deprecated, verified or
+removed. The work is not done until the entry is written. A subdirectory with its own owner or
+rhythm may keep its own `CHANGELOG.md` for that scope; the root one still gets a line pointing
+at it.
+
+The OKF specification calls this file `log.md`. This skill uses the conventional name and the
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format instead, so that people and
+tools read it like any other changelog. When you meet a bundle that still has a `log.md`,
+rename it to `CHANGELOG.md` (fix the links to it), keep its entries, and write new ones in the
+format below.
+
+The format:
+
+- The file starts with `# Changelog` and one line saying what it records.
+- A bundle has no releases, so each **day** is a version: one `## YYYY-MM-DD` heading per day
+  with changes, ISO dates only, **newest first**. Add to today's heading if it exists.
+- Under a day, group entries by kind with `###` headings, in this order, and only the ones
+  that apply:
+  - `### Added` for new concepts, directories and attachments.
+  - `### Changed` for edits to existing content, moves and renames, and `verified` entries.
+  - `### Deprecated` for concepts set to `status: deprecated`, naming the successor.
+  - `### Removed` for files deleted from the bundle.
+  - `### Fixed` for content that was wrong, not merely out of date.
+  - `### Security` for anything removed or changed because it must not be in the bundle.
+- Each entry is one bullet: what changed, linked to the concept, and **why**. Write it so a
+  person can read it a year later; "updated file" is not an entry.
+- Never rewrite or delete past entries. If an entry turns out to be wrong, say so in a new
+  entry.
 
 ```markdown
-# Bundle history
+# Changelog
+
+All notable changes to this knowledge base. The format follows
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/), with one section per day.
 
 ## 2026-09-12
 
-- **Update**: Rewrote [weekly active users](/metrics/weekly-active-users.md) after the
-  session definition changed; `stale_after` moved to 2027-01-01.
-- **Deprecation**: [Legacy margin](/metrics/gross-margin-legacy.md) retired in favour of
-  [gross margin](/metrics/gross-margin.md).
+### Changed
+
+- Rewrote [weekly active users](metrics/weekly-active-users.md) after the session
+  definition changed; `stale_after` moved to 2027-01-01.
+
+### Deprecated
+
+- [Legacy margin](metrics/gross-margin-legacy.md) retired in favour of
+  [gross margin](metrics/gross-margin.md), which excludes returns.
 
 ## 2026-08-30
 
-- **Creation**: Added the `policies/` directory with the three finance policies it mirrors.
-```
+### Added
 
-The bold leading word (`**Update**`, `**Creation**`, `**Deprecation**`, `**Verified**`) is a
-convention, not a requirement. Write entries a person can read a year later: what changed and
-why, not "updated file".
+- The `policies/` directory with the three finance policies it mirrors.
+```
 
 ## Editing an existing concept
 
@@ -370,7 +405,7 @@ why, not "updated file".
 
 The path is the concept's identity, so a move breaks every link to it and no tool will report
 it. Search the bundle for the old file name, fix each link, update both `index.md` files, and
-log the move. When the concept is widely linked or externally referenced, leave the old file
+record the move in `CHANGELOG.md`. When the concept is widely linked or externally referenced, leave the old file
 in place with `status: deprecated` and a one-line body pointing at the new location instead of
 moving it silently.
 
@@ -428,9 +463,10 @@ from "Searching a bundle", and each catches a failure that is otherwise silent:
    nothing.
 6. **Timestamps are ISO 8601 with a UTC offset**, and any `stale_after` you set is in the
    future.
-7. **`log.md` has your entry**, under an ISO date heading, newest first.
+7. **`CHANGELOG.md` has your entry** under today's `## YYYY-MM-DD` heading, newest first,
+   in the right `###` group.
 
 Then confirm what no search can judge: that each new `description` reads as one useful
 sentence, that every claim you added is either sourced or visibly unverified, that no
-`verified` entry claims a check that did not happen, and that the log entry says why, not just
+`verified` entry claims a check that did not happen, and that the changelog entry says why, not just
 what.

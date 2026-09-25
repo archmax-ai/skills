@@ -195,8 +195,9 @@ verdicts are runtime artifacts — never write them into the bundle.
 ## Conformance
 
 A bundle conforms when every non-reserved `.md` file has parseable YAML frontmatter
-containing a non-empty `type`, and `index.md` / `log.md` follow their structures. Consumers
-must not reject a bundle for missing optional fields, unknown `type` values, unknown extra
+containing a non-empty `type`, and `index.md` / `log.md` follow their structures. This skill
+keeps the log as `CHANGELOG.md` instead (see "CHANGELOG.md" in SKILL.md). Consumers must not
+reject a bundle for missing optional fields, unknown `type` values, unknown extra
 keys, broken cross-links, or missing `index.md` files.
 
 That permissiveness is the reason this skill asks you to check your own work: broken links,
