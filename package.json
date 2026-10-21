@@ -1,0 +1,13 @@
+{
+  "name": "archmax-skills",
+  "private": true,
+  "type": "module",
+  "description": "Agent skills, and the script that draws each one's preview.",
+  "scripts": {
+    "previews": "node scripts/render-previews.mjs"
+  },
+  "devDependencies": {
+    "lucide-static": "1.28.0",
+    "yaml": "2.9.0"
+  }
+}

@@ -7,6 +7,8 @@ tools:
   - Copy or move a file without opening it (to copy a template, and for pictures)
   - View a document's text and tables
   - Send or store the finished file
+icon: Presentation
+color: blue
 ---
 
 # Microsoft Office documents

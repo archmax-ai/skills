@@ -6,6 +6,8 @@ tools:
   - Move or rename a file (only when reorganising the folders)
   - Find out the current date and time
   - Fetch a web page (only when a note records material from the web)
+icon: Library
+color: sage
 ---
 
 # OKF knowledge base

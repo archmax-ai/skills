@@ -10,6 +10,8 @@ tools:
   - Read the messages that arrive at an email address (only for the brain mailbox)
   - Send a message or email to a person (only for personal updates, confirmations and reminders)
   - Be started on a schedule (only for recurring jobs)
+icon: BrainCircuit
+color: purple
 ---
 
 # Company brain

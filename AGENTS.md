@@ -107,7 +107,7 @@ installed into a hosted platform, a local agent or a CI job.
 ## Checklist before opening a pull request
 
 - [ ] Folder is `skills/<slug>/` with a lowercase-hyphen slug and no symbolic links.
-- [ ] `SKILL.md` has `name`, `description` and `tools`.
+- [ ] `SKILL.md` has `name`, `description`, `tools`, `icon` and `color`.
 - [ ] The frontmatter `description` is understandable to someone who does not know the
       underlying technology, and ends with when to use the skill. (The body has no such
       constraint.)
@@ -115,3 +115,4 @@ installed into a hosted platform, a local agent or a CI job.
       need".
 - [ ] No product, platform or agent names anywhere in the bundle.
 - [ ] Everything executable lives under `scripts/`; the bundle is small.
+- [ ] `preview.svg` is drawn by `npm run previews`, not edited by hand.

@@ -15,6 +15,7 @@ skills/<slug>/SKILL.md      # required: YAML frontmatter, then the guidance
 skills/<slug>/references/   # optional: documents the skill tells the agent to read
 skills/<slug>/scripts/      # optional: runtime scripts the agent may execute
 skills/<slug>/assets/       # optional: data files the skill refers to
+skills/<slug>/preview.svg   # its preview, drawn by scripts/render-previews.mjs
 ```
 
 One level, no categories: every direct child of `skills/` that holds a `SKILL.md` is one
@@ -24,7 +25,7 @@ installs under. Slugs are lowercase letters, digits and hyphens (`refund-policy`
 containing a symbolic link is not a skill.
 
 Every regular file beneath a skill's directory is part of its bundle and is copied on
-install. Keep bundles small: a host may refuse an oversized file, and a skill's whole text is
+install, except `preview.svg`, which is for browsing. Keep bundles small: a host may refuse an oversized file, and a skill's whole text is
 read by the model once the skill is chosen.
 
 ## Frontmatter
@@ -39,6 +40,8 @@ tools:
   - Copy or move a file without opening it (only for documents with pictures)
   - View a document's text and tables
   - Send or store the finished file
+icon: Presentation
+color: blue
 ---
 ```
 
@@ -48,12 +51,32 @@ tools:
   the underlying technology.
 - `tools` — the capabilities the skill needs, so a person can tell before installing whether
   their agent can follow it.
+- `icon` and `color` — what the skill's preview shows it as: a [lucide](https://lucide.dev)
+  icon name (`Presentation`, `Library`) on a tile in one of `sage`, `rose`, `blue`, `purple`,
+  `rust`, `amber` or `teal`.
 
 The plain-language rule covers these frontmatter fields only. The guidance below the
 frontmatter is read by the model that runs the skill and is as technical as the task needs.
 
 Other keys are preserved on install; a host may add its own `metadata` recording where a
 skill was copied from.
+
+## Previews
+
+| | Skill |
+| --- | --- |
+| ![Company Brain](skills/company-brain/preview.svg) | **Company Brain** |
+| ![Microsoft Office Documents](skills/microsoft-office-documents/preview.svg) | **Microsoft Office Documents** |
+| ![OKF Knowledge Base](skills/okf-knowledge-base/preview.svg) | **OKF Knowledge Base** |
+
+A preview is drawn from the skill, never by hand, so every skill's looks the same: its `icon`
+on a tile in its `color`, ringed by the capabilities its `tools` names, on the archmax
+gradient. After adding or changing a skill:
+
+```sh
+npm install
+npm run previews
+```
 
 ## Contributing
 
