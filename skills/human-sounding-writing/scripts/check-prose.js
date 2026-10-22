@@ -16,9 +16,14 @@ const FLAT_SPREAD = 5;
 /** Abbreviations whose full stop does not end a sentence. */
 const ABBREVIATIONS = ["e.g.", "i.e.", "etc.", "vs.", "Mr.", "Mrs.", "Ms.", "Dr.", "Prof.", "St.", "No.", "approx."];
 
-/** The draft without a leading YAML frontmatter block. */
+/**
+ * The draft without a leading YAML frontmatter block, each of its lines left empty so a dash is
+ * reported on the line it has in the file.
+ */
 function body(text) {
-  return text.replace(/^---\n[\s\S]*?\n---\n/, "");
+  return text
+    .replace(/\r\n?/g, "\n")
+    .replace(/^---\n[\s\S]*?\n---(?:\n|$)/, (frontmatter) => "\n".repeat(frontmatter.split("\n").length - 1));
 }
 
 /** The draft as running prose: code, link targets and Markdown markers left out. */
