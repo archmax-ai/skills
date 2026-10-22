@@ -67,6 +67,7 @@ skill was copied from.
 | --- | --- |
 | ![Company Brain](skills/company-brain/preview.svg) | **Company Brain** |
 | ![Microsoft Office Documents](skills/microsoft-office-documents/preview.svg) | **Microsoft Office Documents** |
+| ![Human-Sounding Writing](skills/human-sounding-writing/preview.svg) | **Human-Sounding Writing** |
 | ![OKF Knowledge Base](skills/okf-knowledge-base/preview.svg) | **OKF Knowledge Base** |
 
 A preview is drawn from the skill, never by hand, so every skill's looks the same: its `icon`

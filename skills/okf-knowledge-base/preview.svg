@@ -52,7 +52,7 @@
     </g>
   </g>
   <rect x="164" y="76.5" width="72" height="72" rx="22" fill="#8c987f" filter="url(#lift)" />
-  <g transform="translate(182 94.5) scale(1.5)" fill="none" stroke="#24212c" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14" />
+  <g transform="translate(182 94.5) scale(1.5)" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14" />
   <path d="M12 6v14" />
   <path d="M8 8v12" />
   <path d="M4 4v16" /></g>

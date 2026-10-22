@@ -78,7 +78,7 @@
     </g>
   </g>
   <rect x="164" y="76.5" width="72" height="72" rx="22" fill="#8878a8" filter="url(#lift)" />
-  <g transform="translate(182 94.5) scale(1.5)" fill="none" stroke="#24212c" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" />
+  <g transform="translate(182 94.5) scale(1.5)" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" />
   <path d="M9 13a4.5 4.5 0 0 0 3-4" />
   <path d="M6.003 5.125A3 3 0 0 0 6.401 6.5" />
   <path d="M3.477 10.896a4 4 0 0 1 .585-.396" />
